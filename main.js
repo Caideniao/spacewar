@@ -18,7 +18,6 @@ var app = new PIXI.Application({
    
 let playerShip,state,speed,gameScene,bull,bullets,ships,background1,background2,ff,good,gameOverScene
 function setup() {
-    // console.log(PIXI.tweenManager.tweens.length)
     gameScene = new PIXI.Container()
     bullets = new PIXI.Container()
     ships = new PIXI.Container()
@@ -53,23 +52,26 @@ function setup() {
     loadShip(40,PIXI.tween.Easing.outBounce(),-20,-20,350,450,'bad2') 
     loadShip(44,PIXI.tween.Easing.outBounce(),280,-20,-100,450,'bad2')
     loadNormal(46,'rock2') 
-    
     ff = shipFire(playerShip)
     common.keyPress(playerShip,speed)
     app.ticker.add(gameLoop) 
 }
 
-function gameOver () {
+function gameOver (me,reset) {
+    gameOverScene.visible = true
     let style = new PIXI.TextStyle({
         fontFamily: "Futura",
         fontSize: 16,
         fill: "white"
       })
     let message = new PIXI.Text("The End~ \n作者：女巫 \n点击重来",style)
-    message.x = 100
+    message.x = 50
     message.y = 100
+    message.text = me
     message.interactive = true
-    app.ticker.remove(gameLoop)
+    if (reset) {
+        app.ticker.remove(gameLoop)
+    }
     //多个计时器，飞船速度叠加，可以试试多次load（setup）查看效果
     let t = PIXI.tweenManager.tweens
     let l = t.length
@@ -80,7 +82,7 @@ function gameOver () {
     message.mousedown = function () {
         gameOverScene.removeChild(message) 
         PIXI.tweenManager.update()
-        //为什么要在这update呢？？？ 
+        //要在这update,不update无法删除动画 
         loader.load(setup)            
     }
     gameOverScene.addChild(message)
@@ -151,8 +153,11 @@ function borderCheck() {
         if (bullet.y < 0) {
             bullets.removeChild(bullet)
         }})
+    if (!ships.children.length) {
+        gameOver('恭喜 你是一名勇士 \n作者：女巫\n联系方式：yzqtdu@Gmail.com',false)
+    }
     ships.children.forEach(function(e){
-        if (e.y === 400) {
+        if (e.y > 399) {
             ships.removeChild(e)
         }
         if (common.hitTestRectangle(playerShip,e)) {
@@ -304,15 +309,13 @@ function loadBackground () {
 }
 
 function end (){  
-    PIXI.tweenManager.update()
     if (gameScene.getChildByName('playerShip')) {
-        gameOverScene.visible = true
         let s = explosion(playerShip,'expl_02_00',23)
         gameScene.removeChild(playerShip)
         s.onLoop = function () {
         s.destroy()
         gameScene.removeChild(s)}
-        gameOver()
+        gameOver('不要气馁~再来一次\n突出重围 点击重玩',true)
     }
 }
 function random() {
