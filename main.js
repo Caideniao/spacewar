@@ -43,15 +43,15 @@ function setup() {
     loadNormal(0,'normal')
     loadShip(12,PIXI.tween.Easing.outSine(),20,-20,380,450,'bad1')
     loadShip(12,PIXI.tween.Easing.outSine(),280,-20,-100,450,'bad1')   
-    loadNormal(18,'rock') 
-    loadNormal(20,'bad2')
-    loadShip(25,PIXI.tween.Easing.inBounce(),280,-20,-100,450,'bad1') 
-    loadShip(28,PIXI.tween.Easing.inBounce(),-20,-20,350,450,'bad1') 
-    loadNormal(30,'bad3')
-    loadNormal(35,'rock2')
-    loadShip(40,PIXI.tween.Easing.outBounce(),-20,-20,350,450,'bad2') 
-    loadShip(44,PIXI.tween.Easing.outBounce(),280,-20,-100,450,'bad2')
-    loadNormal(46,'rock2') 
+    // loadNormal(18,'rock') 
+    // loadNormal(20,'bad2')
+    // loadShip(25,PIXI.tween.Easing.inBounce(),280,-20,-100,450,'bad1') 
+    // loadShip(28,PIXI.tween.Easing.inBounce(),-20,-20,350,450,'bad1') 
+    // loadNormal(30,'bad3')
+    // loadNormal(35,'rock2')
+    // loadShip(40,PIXI.tween.Easing.outBounce(),-20,-20,350,450,'bad2') 
+    // loadShip(44,PIXI.tween.Easing.outBounce(),280,-20,-100,450,'bad2')
+    // loadNormal(46,'rock2') 
     ff = shipFire(playerShip)
     common.keyPress(playerShip,speed)
     app.ticker.add(gameLoop) 
@@ -154,7 +154,7 @@ function borderCheck() {
             bullets.removeChild(bullet)
         }})
     if (!ships.children.length) {
-        gameOver('恭喜 你是一名勇士 \n作者：女巫\n联系方式：yzqtdu@Gmail.com',false)
+        gameOver('恭喜 你是一名勇士 \n作者：女巫\n联系方式：yzqtdu@Gmail.com',true)
     }
     ships.children.forEach(function(e){
         if (e.y > 399) {
