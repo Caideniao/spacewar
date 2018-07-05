@@ -23,7 +23,7 @@ let enemy = {
     bad1:{
         width:25,
         height:30,
-        amount:6,
+        amount:8,
         last:6000,
         image:'enemyGreen3.png',
         count:3
