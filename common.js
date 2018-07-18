@@ -33,7 +33,41 @@ let common = {
         )
         return key
       },
-    keyPress: function (playerShip,speed,s) {
+    fingerMove(playerShip,speed){
+        let startX, startY
+        let endX, endY
+        window.addEventListener(
+            'touchstart', function(e){
+                startX = e.touches[0].screenX
+                startY = e.touches[0].screenY
+            }
+        )
+        window.addEventListener(
+            'touchmove', function(e){
+                endX = e.touches[0].screenX
+                endY = e.touches[0].screenY
+                if (endX - startX !== 0) {
+                    playerShip.vx = endX - startX 
+                } else {
+                    playerShip.vx = 0 
+                }
+                if (endY - startY !== 0) {
+                    playerShip.vy = endY - startY
+                } else {
+                    playerShip.vy = 0
+                }
+                startX = endX
+                startY = endY
+            }
+        )
+        window.addEventListener(
+            'touchend', function(e){
+                playerShip.vx = 0
+                playerShip.vy = 0
+            }
+        )
+    },
+    keyPress: function (playerShip,speed) {
         let left = this.keyboard(65),
         up = this.keyboard(87),
         right = this.keyboard(68),
@@ -122,16 +156,12 @@ let common = {
         combinedHalfHeights = r1.halfHeight + r2.halfHeight
 
         if (Math.abs(vx) < combinedHalfWidths) {
-
           if (Math.abs(vy) < combinedHalfHeights) {
-
             hit = true
           } else {
-
             hit = false
           }
         } else {
-
           hit = false
         }
         return hit

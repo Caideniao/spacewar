@@ -15,8 +15,15 @@ var app = new PIXI.Application({
     let loader
     loader = new PIXI.loaders.Loader()
     loader.add('assets/image.json').load(setup)
-   
-let playerShip,state,speed,gameScene,bull,bullets,ships,background1,background2,ff,good,gameOverScene
+let isPhone = function(){
+    let w = document.documentElement.getBoundingClientRect().width
+    if (w < 500) {
+        return true
+    } else {
+        return false
+    }
+}()
+let playerShip,state,speed,gameScene,bull,bullets,ships,background1,background2,ff,good,gameOverScene,timer
 function setup() {
     gameScene = new PIXI.Container()
     bullets = new PIXI.Container()
@@ -32,11 +39,11 @@ function setup() {
     background2 = createSprite('blue.png',0,-380,300,400,gameScene)
     background1 = createSprite('blue.png',0,0,300,400,gameScene)
    
-
     playerShip = createSprite('playerShip1.png',135,370,ship.width,ship.height,gameScene)
     playerShip.vx = 0
     playerShip.name = 'playerShip'
     playerShip.vy = 0
+   
     speed = 3
     loadBackground()
     state = play
@@ -54,6 +61,8 @@ function setup() {
     loadNormal(46,'rock2') 
     ff = shipFire(playerShip)
     common.keyPress(playerShip,speed)
+    common.fingerMove(playerShip,speed)
+    timer = setInterval(() => {playerShip.fire=true}, 300)
     app.ticker.add(gameLoop) 
 }
 
@@ -79,13 +88,15 @@ function gameOver (me,reset) {
         t[i].remove() 
     }  
     //这里update不行 
-    message.mousedown = function () {
-        gameOverScene.removeChild(message) 
-        PIXI.tweenManager.update()
-        //要在这update,不update无法删除动画 
-        loader.load(setup)            
-    }
+    message.tap = gameRestart
+    message.mousedown = gameRestart
     gameOverScene.addChild(message)
+}
+function gameRestart() {
+    gameOverScene.removeChild(this) 
+    PIXI.tweenManager.update()
+    //要在这update,不update无法删除动画 
+    loader.load(setup)  
 }
 function createSprite(image,px,py,width,height,Container,count) {
     let sprite = new PIXI.Sprite(
@@ -102,7 +113,6 @@ function createSprite(image,px,py,width,height,Container,count) {
 function gameLoop(delta) {
     state(delta)
 }
-
 function play() {
     if (playerShip.vx !==0 || playerShip.vy !== 0) {
         ff.destroy()
@@ -117,13 +127,18 @@ function play() {
     }
     playerShip.x += playerShip.vx
     playerShip.y += playerShip.vy
+    if (isPhone){
+        playerShip.vx = 0
+        playerShip.vy = 0
+    }
+   
     borderCheck()
     hitCheck()
     PIXI.tweenManager.update()
     common.contain(playerShip,{x:0,y:0,width:300,height:400})
 }
 
-function fire(craft) {  
+function fire(craft) { 
     if (craft.fire ) {
         let x = craft.x + 15
         let y = craft.y - 1
@@ -315,6 +330,7 @@ function end (){
         s.onLoop = function () {
         s.destroy()
         gameScene.removeChild(s)}
+        clearInterval(timer)
         gameOver('不要气馁~再来一次\n突出重围 点击重玩',true)
     }
 }
