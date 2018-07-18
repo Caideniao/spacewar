@@ -62,7 +62,9 @@ function setup() {
     ff = shipFire(playerShip)
     common.keyPress(playerShip,speed)
     common.fingerMove(playerShip,speed)
-    timer = setInterval(() => {playerShip.fire=true}, 300)
+    if (isPhone) {
+        timer = setInterval(() => {playerShip.fire=true}, 300)
+    }
     app.ticker.add(gameLoop) 
 }
 
